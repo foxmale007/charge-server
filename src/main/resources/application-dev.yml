@@ -1,0 +1,60 @@
+app:
+   serverport: 8080
+   cdnHost: http://localhost:8080
+   productName: charge
+   init: #系统初始化
+      mode: create #数据库创建模式，可用模式[create/none]
+      qserver: true #quarz and queue server 用于执行定时和队列任务服务
+
+      defaultDataPath: /initdata/default-data.xml #系统预置数据
+      defaultDeleteDataPath: #如果项目要对系统初始数据进行删除补丁，写到这里
+      productDataPath: /initdata/user-data-charge.xml,/initdata/test-data-charge.xml #业务预置数据，使用“,”分隔可配置多个，命名规则user-data-xxx，test-data-xxx
+      loadAndDeleteDataPath: /initdata/patch.xml #单次load数据，用于数据补丁
+      
+   dataSource: #数据库相关配置
+      driver: com.mysql.cj.jdbc.Driver
+      driverUrl: jdbc:mysql:replication://127.0.0.1:3306,127.0.0.1:3306/charge?autoReconnect=true&useSSL=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+      username: charge
+      password: charge
+      minConnectionCount: 5 #生产模式建议100以上
+      maxConnectionCount: 10 #生产模式建议100以上
+      hibernateDialect: org.hibernate.dialect.MySQL5InnoDBDialect
+   cache:
+      redisHosts: 127.0.0.1:6379 #多个地址配置使用逗号分隔
+      #redisHosts: 192.168.1.210:26379,192.168.1.211:26379
+
+   search:
+      #elasticsearchIp: 192.168.1.212,192.168.1.213 #使用集群模式，逗号分隔
+      embedded: true
+      elasticsearchIp: 127.0.0.1 #使用集群模式，逗号分隔，可加冒号带端口号
+   quartz:
+      threadCount: 2 #定时线程处理
+
+   adapter:
+      sms:
+         #adapterBean: aliyunSmsAdapter
+         adapterBean: logSmsAdapter
+
+   debug:
+      cors: true #本地测试开启跨域
+      swagger: true #开启swagger进行测试
+      currentDomain: www
+   mqtt:
+      server: charge.higtek.cn
+      userName: charge
+      password: abcd1234
+      topicPath: /chargePoint/
+
+#阿里云aliyunSmsAdapter参数
+aliyun-sms:
+   sign-name: 龙阳臻品
+   access-key-id: LTAI2euFTc34fDHO
+   access-key-secret: 9FEShpSirFCKnrkYd9yRfUNlxbNeLM
+   template-id-mapper:
+      smsLogin: "SMS_112475501"
+      smsResetPassword: "SMS_112470571"
+      smsRegister: "SMS_113125016"
+   templateContMapper:
+      smsLogin: "验证码：${code}，您正在使用手机帐号登录操作（验证码告知他人将导致帐号被盗，请勿泄漏）"
+      smsResetPassword: "您正在使用手机重置登录密码操作，您的新登录密码是：${password}"
+      smsRegister: "验证码：${code}，您正在进行手机帐号注册操作"

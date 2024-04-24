@@ -1,0 +1,1 @@
+cmd /c mvn install:install-file -Dfile=./plugin-classloader-6.8.19.jar -DgroupId=org.codelibs.elasticsearch.lib -DartifactId=plugin-classloader -Dversion=6.8.19 -Dpackaging=jar

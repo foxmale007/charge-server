@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="OFF">
+	<Properties>
+		<!-- <property name="LOG_PATTERN" value="%d{MM.dd HH:mm:ss.SSS} [%t] %-5p %c{1.} - %m%n" />  -->
+		<property name="LOG_PATTERN" value="%d{MM.dd HH:mm:ss.SSS} [%t] %-5p %c - %m%n" />
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="INFO">
+			<AppenderRef ref="Console" />
+		</Root>
+		<logger name="org.ccframe" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </logger>
+	</Loggers>
+</Configuration>

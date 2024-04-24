@@ -1,0 +1,308 @@
+//---------------------- 公共部分 ----------------------//
+
+//系统启动初始化：自动下载插件
+buildscript {
+    repositories {
+        // Maven 镜像聚合了：central、jcenter、google、gradle-plugin
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        mavenLocal() //缺失的库添加到本地
+    }
+}
+
+//公共仓库配置
+repositories {
+    // Maven 镜像聚合了：central、jcenter、google、gradle-plugin
+    maven { url 'https://maven.aliyun.com/repository/central' }
+    maven { url 'https://maven.aliyun.com/repository/jcenter' }
+    maven { url 'https://maven.aliyun.com/repository/google' }
+    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    mavenLocal() //缺失的库添加到本地
+}
+
+//---------------------- JAVA 编译插件 ----------------------//
+
+apply plugin: 'java-library'
+
+//JAVA 文件编码
+compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {  
+    options.debug = true //输出行号
+    options.debugOptions.debugLevel = "source,lines,vars" //输出行号
+    options.encoding = "UTF-8"  
+}
+
+//JAVA兼容性设置
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+//---------------------- JAR 打包插件 ----------------------//
+apply plugin: 'application'
+mainClassName = 'org.ccframe.app.App'
+jar {
+	manifestContentCharset 'utf-8'
+	metadataCharset 'utf-8'
+    manifest {
+        attributes 'Main-Class': 'org.ccframe.app.App'
+    }
+}
+
+task clearJar(type: Delete) {
+    delete "$buildDir\\libs\\lib"
+}
+
+task copyJar(type: Copy, dependsOn: 'clearJar') { //提取所有的jar
+    from configurations.compileClasspath{
+    	exclude 'lombok*'
+    	exclude 'jsp-api*'
+    }
+    into "$buildDir\\libs\\lib"
+}
+
+
+bootJar {//配合jar服务器启动.bat脚本
+    // 例外所有的jar
+    excludes = ["*.jar"]
+    // lib目录的清除和复制任务 
+    dependsOn clearJar
+    dependsOn copyJar
+ 
+    // 指定依赖包的路径
+    manifest {
+        attributes "Manifest-Version": 1.0,
+            'Class-Path': configurations.compileClasspath.files.collect { "lib/$it.name" }.join(' ')
+    }
+}
+
+//----------------------- 编译JAR依赖配置 ------------------------//
+configurations.all { //默认不自动关联依赖，以免打包过大
+   transitive = false
+   resolutionStrategy.cacheChangingModulesFor 0, 'seconds' //立即检查而不是要过24h，因为有snapshot
+}
+
+dependencies {
+    //参与编译与发布.
+
+    implementation 'org.springframework.boot:spring-boot:2.3.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter:2.3.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.3.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure:2.3.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.3.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-freemarker:2.3.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2:2.3.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-tomcat:2.3.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch:2.3.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-security:2.3.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz:2.3.2.RELEASE'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive:2.3.2.RELEASE'
+    
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.37'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.37'
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
+
+    implementation 'commons-fileupload:commons-fileupload:1.3.3'
+    implementation 'commons-io:commons-io:2.5'
+    implementation 'commons-jxpath:commons-jxpath:1.3'
+    implementation 'commons-lang:commons-lang:2.6'
+    implementation 'org.apache.commons:commons-lang3:3.11'
+    implementation 'commons-collections:commons-collections:3.2.2'
+	implementation 'org.apache.commons:commons-collections4:4.4'
+    implementation 'commons-codec:commons-codec:1.15'
+
+    implementation 'org.springframework:spring-core:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-beans:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-web:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-webmvc:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-context:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-context-support:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-tx:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-orm:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-aop:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-jdbc:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-expression:5.2.8.RELEASE'
+
+    implementation 'org.apache.poi:poi:3.14' //3.16要commons-collection4，700多k，暂不更新
+    implementation 'org.apache.poi:poi-ooxml:3.14'
+    implementation 'org.apache.poi:poi-ooxml-schemas:3.14'
+    implementation 'org.apache.poi:poi-scratchpad:3.14'
+    implementation 'org.apache.xmlbeans:xmlbeans:3.1.0'
+    implementation 'stax:stax-api:1.0.1'
+
+	//权限认证
+	implementation 'org.springframework.security:spring-security-config:5.3.3.RELEASE'
+	implementation 'org.springframework.security:spring-security-core:5.3.3.RELEASE'
+	implementation 'org.springframework.security:spring-security-web:5.3.3.RELEASE'
+//	implementation 'org.springframework.security:spring-security-jwt:1.1.1.RELEASE'
+
+    implementation 'org.springframework.data:spring-data-commons:2.2.13.RELEASE'
+    implementation 'org.springframework.data:spring-data-jpa:2.2.13.RELEASE'
+    implementation 'org.springframework.data:spring-data-elasticsearch:3.2.13.RELEASE' //锁定版本 https://mvnrepository.com/artifact/org.springframework.data/spring-data-releasetrain/Moore-SR13
+//	implementation 'org.springframework.data:spring-data-redis:2.2.13.RELEASE' //lettuce驱动需要
+//	implementation 'org.springframework.data:spring-data-keyvalue:2.2.13.RELEASE' //lettuce驱动需要
+
+    implementation 'org.apache.lucene:lucene-analyzers-common:7.7.3'
+    implementation 'org.apache.lucene:lucene-core:7.7.3'
+    implementation 'org.apache.lucene:lucene-highlighter:7.7.3'
+    implementation 'org.apache.lucene:lucene-join:7.7.3'
+    implementation 'org.apache.lucene:lucene-memory:7.7.3'
+    implementation 'org.apache.lucene:lucene-queries:7.7.3'
+    implementation 'org.apache.lucene:lucene-queryparser:7.7.3'
+    implementation 'org.apache.lucene:lucene-spatial:7.7.3'
+    implementation 'org.apache.lucene:lucene-suggest:7.7.3'
+    implementation 'org.apache.lucene:lucene-sandbox:7.7.3'
+    implementation 'org.apache.lucene:lucene-misc:7.7.3'
+    implementation 'org.apache.lucene:lucene-grouping:7.7.3'
+    implementation 'joda-time:joda-time:2.9.9'
+    
+    implementation 'org.elasticsearch:elasticsearch-core:6.8.19'
+    implementation 'org.elasticsearch:elasticsearch:6.8.19'
+    implementation 'org.elasticsearch:elasticsearch-x-content:6.8.19'
+    implementation 'org.elasticsearch.plugin:transport-netty4-client:6.8.19'
+    implementation 'org.elasticsearch.plugin:rank-eval-client:6.8.19'
+	implementation 'org.apache.commons:commons-pool2:2.8.0'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.12'
+    implementation 'org.apache.httpcomponents:httpcore:4.4.13'
+    implementation 'org.apache.httpcomponents:httpcore-nio:4.4.13'
+    implementation 'org.apache.httpcomponents:httpasyncclient:4.1.4'
+    
+    //ES本地服务额外需要
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.11.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
+    implementation 'org.elasticsearch:elasticsearch-cli:6.8.19'
+    implementation 'com.tdunning:t-digest:3.2'
+    implementation 'org.elasticsearch:jna:5.5.0'
+    //implementation files('/lib/plugin-classloader-6.8.19.jar')
+    implementation 'org.codelibs.elasticsearch.lib:plugin-classloader:6.8.19'
+    
+    implementation 'org.hibernate:hibernate-core:5.4.19.Final'
+    implementation 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final'
+    implementation 'org.hibernate.common:hibernate-commons-annotations:5.1.0.Final'
+    implementation 'net.bytebuddy:byte-buddy-dep:1.10.14'
+    implementation 'org.ow2.asm:asm:8.0.1'
+    implementation 'org.ow2.asm:asm-commons:8.0.1'
+    implementation 'org.jboss:jandex:2.1.3.Final'
+    implementation 'jakarta.persistence:jakarta.persistence-api:2.2.3'
+
+    implementation 'org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE'
+    implementation 'org.springframework.plugin:spring-plugin-metadata:1.2.0.RELEASE'
+
+//	implementation 'io.lettuce:lettuce-core:5.3.1.RELEASE'
+//	implementation 'io.netty:netty-all:4.1.50.Final'
+//	implementation 'io.projectreactor:reactor-core:3.3.6.RELEASE'
+//	implementation 'org.reactivestreams:reactive-streams:1.0.3'
+
+	implementation 'redis.clients:jedis:2.9.3' //j2cache限制不要升级
+	implementation 'io.netty:netty-all:4.1.50.Final'
+
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+	implementation 'io.springfox:springfox-swagger-common:2.9.2'    
+    implementation 'io.springfox:springfox-swagger2:2.9.2'
+    implementation 'io.springfox:springfox-spring-web:2.9.2'
+    implementation 'io.swagger:swagger-models:1.6.3'
+    implementation 'io.swagger:swagger-annotations:1.6.3'
+    implementation 'io.springfox:springfox-core:2.9.2'
+    implementation 'io.springfox:springfox-spi:2.9.2'
+    implementation 'io.springfox:springfox-schema:2.9.2'
+    implementation 'io.springfox:springfox-swagger-common:2.9.2'
+    implementation 'org.mapstruct:mapstruct:1.2.0.Final'
+    implementation 'io.github.wilson-he:swagger2-spring-boot-starter:1.1.2'
+    implementation 'com.google.guava:failureaccess:1.0.1'
+
+	implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'commons-logging:commons-logging:1.2'
+    implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
+//    implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
+    implementation 'org.yaml:snakeyaml:1.26'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.11.0'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.11.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.0'
+
+    implementation 'org.freemarker:freemarker:2.3.30'
+    implementation 'com.alibaba:druid:1.1.23'
+    implementation 'mysql:mysql-connector-java:8.0.21'
+    implementation 'org.redisson:redisson:3.15.6' //redis分布式扩展支持
+    implementation 'org.jboss.marshalling:jboss-marshalling:2.0.9.Final'
+    implementation 'org.jboss.marshalling:jboss-marshalling-river:2.0.9.Final'
+
+	//hanlp词法分析器 http://hanlp.linrunsoft.com/index.html
+	implementation 'com.hankcs:hanlp:portable-1.7.1'
+	implementation 'com.google.guava:guava:29.0-jre'
+    implementation 'com.carrotsearch:hppc:0.8.2'
+
+    implementation 'org.slf4j:jul-to-slf4j:1.7.30'
+    implementation 'org.springframework:spring-jcl:5.2.8.RELEASE'
+
+    implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names:2.11.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.11.0'
+
+	implementation 'net.oschina.j2cache:j2cache-spring-boot2-starter:2.8.0-release'
+	implementation 'net.oschina.j2cache:j2cache-core:2.8.2-release'
+	implementation 'net.oschina.j2cache:j2cache-springcache:2.8.0-release'
+	implementation 'de.ruedigermoeller:fst:2.57'
+	implementation 'org.objenesis:objenesis:3.1'
+
+	implementation 'com.github.ben-manes.caffeine:caffeine:2.8.4'
+    
+    implementation 'com.alibaba:fastjson:1.2.62'
+    implementation 'com.fasterxml:classmate:1.5.1'
+    implementation 'org.javassist:javassist:3.27.0-GA'
+    implementation 'org.jboss.logging:jboss-logging:3.4.1.Final'
+    implementation 'org.apache.geronimo.specs:geronimo-jta_1.1_spec:1.1.1'
+    implementation 'org.dom4j:dom4j:2.1.3'
+    implementation 'jakarta.annotation:jakarta.annotation-api:1.3.5'
+
+    implementation 'net.coobird:thumbnailator:0.4.8'
+	implementation 'org.dbunit:dbunit:2.5.4' //不要升级
+	implementation 'org.apache.ant:ant:1.9.9'
+    implementation 'antlr:antlr:2.7.7'
+    
+    implementation 'io.jsonwebtoken:jjwt:0.9.1' //token方案
+    
+    //集群定时任务
+    implementation 'org.quartz-scheduler:quartz:2.3.2'
+    implementation 'org.quartz-scheduler:quartz-jobs:2.3.2'
+    
+	implementation 'com.github.binarywang:weixin-java-miniapp:3.8.0' //微信小程序二维码支持
+	
+    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:6.8.19'
+    implementation 'org.elasticsearch.client:elasticsearch-rest-client:6.8.19'
+    implementation 'org.elasticsearch.plugin:lang-mustache-client:6.8.19'
+
+	implementation 'uk.org.lidalia:sysout-over-slf4j:1.0.2' //system out err stacktrace转slf4j，便于统一日志
+	//implementation 'net.logstash.logback:logstash-logback-encoder:6.4'
+	//implementation 'org.sejda.imageio:webp-imageio:0.1.6' //webp的imageIO，用于小图
+
+	implementation 'io.minio:minio:7.1.4' //minio分布式文件
+	implementation 'com.squareup.okhttp3:okhttp:4.9.0' //minio用的http client
+	implementation 'com.squareup.okio:okio:2.8.0'  //minio用的http client
+	implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.10'
+
+	//项目专用
+	implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+	implementation 'com.google.zxing:core:3.4.1'
+	implementation 'com.google.zxing:javase:3.4.1'
+	implementation 'org.java-websocket:Java-WebSocket:1.3.8'
+    implementation 'com.google.code.gson:gson:2.8.5'
+	implementation 'com.aliyun:aliyun-java-sdk-core:4.3.2' //阿里云基础SDK
+    implementation 'com.aliyun:aliyun-java-sdk-dysmsapi:2.1.0' //短信
+    
+	//其它编译但是不需要发布的
+    compileOnly 'javax.servlet.jsp:jsp-api:2.2'
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+	annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    //参与测试不进行发布
+    testImplementation 'junit:junit:4.8' //4.11的版本需要额外包
+    testImplementation 'com.lmax:disruptor:3.4.2' //内存队列见http://lmax-exchange.github.com/disruptor多线程创建和消费队列
+
+}
+
+
+

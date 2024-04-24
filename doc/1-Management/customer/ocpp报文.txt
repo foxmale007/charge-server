@@ -1,0 +1,142 @@
+﻿//登陆
+[2021-11-09 15:54:38:613] Socket Connect Server Successful
+Send Handshake:GET /2103252121090001 HTTP/1.1
+Host:120.79.1.235:9004
+Origin: http://2103252121090001
+Authorization: Basic MjEwMzI1MjEyMTA5MDAwMToxMjM0NTY3OA==
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: UWR0SXNETGFNRjM0dVJMNg==
+Sec-WebSocket-Protocol: ocpp1.6
+Sec-WebSocket-Version: 13
+
+
+WebSocket Send Handshake
+receive data: HTTP/1.1 101 Web Socket Protocol Handshake
+Connection: Upgrade
+Date: Tue, 09 Nov 2021 07:54:39 GMT
+Sec-WebSocket-Accept: G1E6fpVvRQdSnjV5XTRQU97GYTY=
+Sec-WebSocket-Protocol: ocpp1.6
+Server: TooTallNate Java-WebSocket
+Upgrade: websocket
+//启动通知  
+[2,"100","BootNotification",{"chargePointVendor":"TONLY","chargePointModel":"TonlyCharger_48A","chargePointSerialNumber":"2103252121090001","firmwareVersion":"AC48A_1PV100"}]
+[3,"100",{"currentTime":"2021-11-09T15:54:39.397","interval":60,"status":"Accepted"}]
+//状态通知  空闲
+[2,"101","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available"}]
+receive data: ?[3,"101",{}]
+//状态通知 就绪
+[2,"105","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing"}]
+[2021-11-09 15:58:40:440] receive data: ?[3,"105",{}]
+//状态通知 故障
+[2,"103","StatusNotification",{"connectorId":1,"errorCode":"ReaderFailure","status":"Faulted"}]
+[2021-11-09 16:15:30:087] receive data: ?[3,"102",{}]
+//状态通知 充电中
+[2,"113","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Charging"}]
+receive data: ?[3,"113",{}]
+//状态通知 充电完成
+[2,"135","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Finishing"}]
+receive data: ?[3,"135",{}]
+//状态通知 预约功能
+[2,"253","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Reserved"}]
+[2021-11-10 09:40:51:322] receive data: ?[3,"253",{}]
+
+//心跳
+[2,"104","Heartbeat",{}] (47 bytes) 
+[3,"104",{"currentTime":"2021-11-09T15:55:20.215"}]
+//获取配置
+[2,"2021119161654531","GetConfiguration",{"key":["WIFI_SSID_Key","WIFI_PassWordKey"]}]
+ResetData GetConfiguration = [3,"2021119161654531",{"configurationKey":[{"key":"GetConfigurationMaxKeys","value":"25","readonly":true},{"key":"Pilot_Number","value":"2103252121090001","readonly":true},{"key":"CurrentPrice","value":"0.60","readonly":false},
+{"key":"Language","value":"English","readonly":false},{"key":"MaxCurrent","value":"48.00","readonly":false},{"key":"ChargerMode","value":"1","readonly":false},{"key":"Local_Ip","value":"192.168.1.8","readonly":false},
+{"key":"HeartbeatInterval","value":"60","readonly":false},{"key":"MeterValueInterval","value":"60","readonly":false},{"key":"Over_Temper","value":"80","readonly":false},{"key":"RemoteStartAuthorize","value":"0","readonly":true},
+{"key":"LocalAuthorize","value":"0","readonly":true},{"key":"LocalPreAuthorize","value":"0","readonly":true},{"key":"ConnectNumber","value":"1","readonly":true},{"key":"Wifi_Name","value":"WIFI_Default","readonly":false},
+{"key":"Wifi_Password","value":"12345678","readonly":false},{"key":"Rate_Price1","value":"0.50","readonly":false},{"key":"Rate_Time1","value":"00:00-07:00","readonly":false},{"key":"Rate_Price2","value":"1.00","readonly":false},
+{"key":"Rate_Time2","value":"07:00-12:00","readonly":false},{"key":"Rate_Price3","value":"0.60","readonly":false},{"key":"Rate_Time3","value":"12:00-18:00","readonly":false},{"key":"Rate_Price4","value":"1.50","readonly":false},
+{"key":"Rate_Time4","value":"18:00-00:00","readonly":false},{"key":"J_RateCurrency","value":"0-00:00","readonly":false}]}]
+//更改配置
+[2,"20211191617369433","ChangeConfiguration",{"key":"config","value":"[{\"key\":\"Rate_Price1\",\"value\":\"0.50\"},{\"key\":\"Rate_Time1\",\"value\":\"00:00-07:00\"},{\"key\":\"Rate_Price2\",\"value\":\"1.00\"},{\"key\":\"Rate_Time2\",\"value\":\"07:00-12:00\"},{\"key\":\"Rate_Price3\",\"value\":\"0.60\"},{\"key\":\"Rate_Time3\",\"value\":\"12:00-18:00\"},{\"key\":\"Rate_Price4\",\"value\":\"1.50\"},{\"key\":\"Rate_Time4\",\"value\":\"18:00-00:00\"}]"}]
+[3,"20211191617369433",{"status":"Accepted"}]
+
+//远程启动
+[2,"2021119162036620","RemoteStartTransaction",{"connectorId":1,"idTag":"13714319313","chargingProfile":{"chargingProfileId":1,
+"transactionId":701,"stackLevel":1,"chargingProfilePurpose":"TxProfile","chargingProfileKind":"Recurring","chargingSchedule":
+{"duration":0,"chargingRateUnit":"A","chargingSchedulePeriod":[{"startPeriod":1,"limit":32.0,"numberPhases":3}]}}}]
+[3,"2021119162036620",{"status":"Accepted"}]
+
+//授权
+[2,"111","Authorize",{"idTag":"13714319313"}]
+[3,"111",{"idTagInfo":{"expiryDate":"2021-11-09T16:20:36.224","status":"Accepted"}}]
+
+//开始传输
+[2,"112","StartTransaction",{"connectorId":1,"idTag":"13714319313","meterStart":0,"reservationId":0,"timestamp":"2021-11-09T16:20:35"}]
+ [3,"112",{"idTagInfo":{"expiryDate":"2021-11-09T16:20:36.297","parentIdTag":"13714319313","status":"Accepted"},"transactionId":701}]
+
+//获取电表值
+[2,"114","MeterValues",{"connectorId":1,"transactionId":701,"meterValue":[{"timestamp":"2021-11-09T16:20:35","sampledValue":
+[{"value":"0.00","context":"Sample.Periodic","format":"Raw","measurand":"Energy.Active.Import.Register","unit":"kWh"},
+{"value":"0.00","context":"Sample.Periodic","format":"Raw","measurand":"Current.Export","phase":"L1","unit":"A"},
+{"value":"0.00","context":"Sample.Periodic","format":"Raw","measurand":"Current.Export","phase":"L2","unit":"A"},
+{"value":"0.00","context":"Sample.Periodic","format":"Raw","measurand":"Current.Export","phase":"L3","unit":"A"},
+{"value":"230.8","context":"Sample.Periodic","format":"Raw","measurand":"Voltage","phase":"L1","unit":"V"},
+{"value":"230.1","context":"Sample.Periodic","format":"Raw","measurand":"Voltage","phase":"L2","unit":"V"},
+{"value":"230.6","context":"Sample.Periodic","format":"Raw","measurand":"Voltage","phase":"L3","unit":"V"},
+{"value":"33","context":"Sample.Periodic","format":"Raw","measurand":"Temperature","unit":"Celcius"}]}]}]
+receive data: ?[3,"114",{}]
+
+//远程停止
+[2,"20211191627106370","RemoteStopTransaction",{"transactionId":701}]
+RemoteStopTransactionData Response = [3,"20211191627106370",{"status":"Accepted"}]
+
+//停止传输
+[2,"134","StopTransaction",{"meterStop":0,"timestamp":"2021-11-09T16:27:09","transactionId":701}]
+receive data: [3,"134",{}]
+
+//数据传输
+[2,"136","DataTransfer",{"vendorId":"TONLY","messageId":"currentrecord","data":{"id":1,"connectorId":1,"chargemode":1,"startengry":0.00,
+"endengry":0.00,"starttime":"2021-11-09 16:26:38","endtime":"2021-11-09 16:27:08","costenergy":0.00,"costmoney":0.00,"transactionId":701,
+"stopReason":"Stop 3"}}]
+receive data: [3,"136",{"status":"Accepted"}]
+//预约状态
+[2,"20211110940511291","ReserveNow",{"connectorId":1,"expiryDate":"2021-11-10T09:55:50.877","idTag":"13714319313","reservationId":1}]
+[3,"20211110940511291",{"status":"Accepted"}]
+//取消预约
+[2,"20211110118248789","CancelReservation",{"reservationId":5}]
+ CancelReservation Response = [3,"20211110118248789",{"status":"Accepted"}]
+//触发功能 获取诊断状态
+[2,"20211110159454930","TriggerMessage",{"connectorId":1,"requestedMessage":"DiagnosticsStatusNotification"}]
+[3,"20211110159454930",{"status":"Accepted"}]
+//触发功能 获取启动通知
+[2,"202111101634533576","TriggerMessage",{"connectorId":1,"requestedMessage":"BootNotification"}]
+[3,"202111101634533576",{"status":"Accepted"}]
+//触发功能 获取升级状态
+[2,"20211110163601519","TriggerMessage",{"connectorId":1,"requestedMessage":"FirmwareStatusNotification"}]
+[3,"100",{"currentTime":"2021-11-10T16:33:49.888","interval":60,"status":"Accepted"}]
+//触发功能 获取电表值
+[2,"202111101641279662","TriggerMessage",{"connectorId":1,"requestedMessage":"MeterValues"}]
+//设备处于空闲所以拒绝
+TriggerMessageData Response = [3,"202111101641279662",{"status":"Rejected"}]
+//触发功能 获取诊断
+[2,"202111101637486717","GetDiagnostics",{"location":"ftp://test:root_123@120.79.1.235:21/diagnosticFiles"}]
+[3,"202111101637486717",{"fileName":"2103252121090001-2021-11-10.txt"}]
+[2,"106","DiagnosticsStatusNotification",{"status":"Uploading"}]
+//FTP 上传文件  Update File data successful!提示上传成功后发送上传完成
+[2,"107","DiagnosticsStatusNotification",{"status":"Uploaded"}]
+//触发功能 获取状态通知
+[2,"202111101642296937","TriggerMessage",{"connectorId":1,"requestedMessage":"StatusNotification"}]
+[3,"202111101634533576",{"status":"Accepted"}]
+//更改有效性  可用
+[2,"20211110168141165","ChangeAvailability",{"connectorId":1,"type":"Operative"}]
+ChangeAvailabilityData Response = [3,"20211110168141165",{"status":"Accepted"}]
+//更改有效性  禁用
+[2,"202111101622478979","ChangeAvailability",{"connectorId":1,"type":"Inoperative"}]
+ ChangeAvailabilityData Response = [3,"202111101622478979",{"status":"Accepted"}]
+
+//升级
+[2,"20211191553208096","UpdateFirmware",{"location":"120.79.1.235:21:test:root_123:/test/AC48k01_update.bin","retrieveDate":"2021-11-09T15:53:20.247"}]7"}]
+[3,"20211191553208096",{}]
+[2,"102","FirmwareStatusNotification",{"status":"Downloaded"}]
+
+[2,"103","FirmwareStatusNotification",{"status":"Downloaded"}]
+[2,"102","FirmwareStatusNotification",{"status":"Installed"}]
+
+[2,"103","FirmwareStatusNotification",{"status":"Installed"}]

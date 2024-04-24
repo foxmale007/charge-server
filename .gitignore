@@ -1,0 +1,7 @@
+build
+bin
+war/WEB-INF/eshome/esdata/nodes/
+.gradle
+logs/
+war/classes/
+war/WEB-INF/classes

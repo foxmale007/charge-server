@@ -1,0 +1,10 @@
+charge-api-controller,post,/api/charge/bindUser,apiToken 前台Token
+,get,/api/charge/listChargepointequipment,apiToken 前台Token
+,post,/api/charge/remoteStartTransaction,该操作仅向设备发送开始充电请求，设备确认充电需要依赖MQTT推送的状态消息
+,post,/api/charge/remoteStopTransaction,该操作仅向设备发送停止充电请求，设备确认需要依赖MQTT推送的状态消息
+common-api-controller,post,/api/common/doLogin,apiToken 前台Token
+,post,/api/common/mobileLogin,apiToken 前台Token
+,post,/api/common/sendAuthCode,apiToken 前台Token
+,post,/api/common/test1,apiToken 前台Token
+,post,/api/common/uploadFile,apiToken 前台Token
+,get,/api/common/uuid,此方法可以用于获得服务器唯一页面id，用于验证码sid、短信验证sid等请求
